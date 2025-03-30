@@ -78,4 +78,4 @@ Fine-tuning a Large Language Model to Text2SQL Model with the function of genera
 
    ```
 ## Project Detail
-Read more about project in [project_summary]()
+Read more about project in [project_summary](https://github.com/hoangthvn2201/Fine-tuning_LLM_to_text2sql_model/blob/main/project_summary_29_12_2024.pdf)

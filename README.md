@@ -24,7 +24,7 @@ Fine-tuning a Large Language Model to Text2SQL Model with the function of genera
   - schema linking: of preivious answer if answer is sql query (Format: [Tables, Columns, Foreign keys, Possible cell values])
   - question: related to previous question
   - answer: SQL query or natural answer
-* Strategy for Creating Dataset: synthetic data using ChatGPT ([prompt gen dataset]())
+* Strategy for Creating Dataset: synthetic data using ChatGPT ([prompt gen dataset](https://github.com/hoangthvn2201/Fine-tuning_LLM_to_text2sql_model/blob/main/preparing_sql_dataset/prompt_gen_data.txt))
 
 ## Use with transformers
    ```python

@@ -1,0 +1,70 @@
+Role: Bạn là một chuyên gia về viết các cây truy vấn SQL với cơ sở dữ liệu mySQL. 
+Context: Tôi muốn có một tập dataset để huấn luyện một mô hình LLM từ ngôn ngữ tự nhiên thành SQL querries bằng tiếng Anh từ một database có cấu trúc sau:  
+Schema:
++Table Author, columns=[AuthorId: int, AuthorName: nvarchar(255)]
++Table Department, columns=[DepartmentId: int, DepartmentName: nvarchar(255)]
++Table GroupDC, columns=[GroupDCId: int, DepartmentId: int, GroupDCName nvarchar(255)]
++Table Job, columns=[JobId: int, JobName: nvarchar(255)]
++Table Tool, columns=[ToolId: int, ToolName: nvarchar(255), ToolDescription: text]
++Table Jidouka, columns=[JidoukaId: bigint, ProductApply: nvarchar(255), ImprovementName: nvarchar(255), SoftwareUsing: nvarchar(255), Description: nvarchar(255), Video: text, DetailDocument: text, TotalJobApplied: int, TotalTimeSaved: int, DateCreate: datetime, JobId: int, AuthorId: int, DepartmentId: int, GroupDCId: int]
++Table JidoukaTool, columns=[JidoukaId: bigint, ToolId: int]
++Primary_keys=[Author.AuthorId, Department.DepartmentId, GroupDC.GroupDCId, Job.JobId, Tool.ToolId, Jidouka.JidoukaId]
++Foreign_keys=[GroupDC.DepartmentId=Department.DepartmentId, Jidouka.JobId=Job.JobId, Jidouka.AuthorId=Author.AuthorId, Jidouka.DepartmentId=Department.DepartmentId, Jidouka.GroupDCId=GroupDC.GroupDCId, JidoukaTool.JidoukaId=Jidouka.JidoukaId, JidoukaTool.ToolId=Tool.ToolId]
+
+Đây là một số từ đồng nghĩa của các cột sẽ giúp bạn tạo ra những câu hỏi đa dạng hơn
+-AuthorName: author, creator, employee
+-DepartmentName: department, design center
+-GroupDCName: group, team
+-JobName: Job, task, task type, job type 
+-ToolName: tool, kit, support application, support tool 
+-ToolDescription: description of tool, tool detail 
+-ProductApply
+-JidoukaId: id of improvement, id of innovation
+-ImprovementName: improvement, innovation, jidouka
+-Description: detail of innovation, detail of improvement, detail of jidouka, description of innvation, description of improvement, description of jidouka
+-Video: link video link to tutorial
+-DetailDocument: link document 
+-TotalJobApplied: total number of job that applied this improvement, total numeber of job that applied this jidouka
+-TotalTimeSaved: total numebr of hours were saved, saved hours, saved time 
+-DateCreate: creation date, launch date, release date
+
+Action:  Đặt câu hỏi bằng ngôn ngữ tự nhiên và bạn trả lời câu hỏi đó bằng SQL query để truy xuất thông tin từ bảng. Nếu câu hỏi của người dùng không liên quan đến thông tin trong bảng mà đó là một kiến thức phổ thông thì hãy tự trả lời theo cách của bạn theo cách ngắn gọn, rõ ràng, nếu không chắc chắn thì trả lời không biết. Hãy sinh cho tôi 20 cuộc hội thoại với câu hỏi phức tạp và cần sử dụng tới sub-queries. Answer: Trả lời theo format python list: [previous question, previous SQL answer or natural answer, schema linking of previous answer if answer is sql query(Format: [Tables, Columns, Foreign keys, Possible cell values]), question(related to previous question), answer (SQL query or natural answer)]
+Requirements: Nếu câu hỏi của người dùng không liên quan đến thông tin trong bảng mà đó là một kiến thức phổ thông thì hãy tự trả lời theo cách của bạn theo cách ngắn gọn, rõ ràng, nếu không chắc chắn thì trả lời không biết. Hãy sinh cho tôi 20 cuộc hội thoại thỏa mãn yêu cầu trên với tỉ lệ câu hỏi không liên quan đến thông tin trong bảng là 30% trong đó 20% bạn có thể trả lời và 10% bạn không chắc chắn.
+
+EXAMPLE:
+Related to schema
+Example 1:
+    ["What is the improvement name of the innovation with ID 123?",
+     "SELECT ImprovementName FROM Jidouka WHERE JidoukaId = 123;",
+     "{Tables: [Jidouka], Columns: [Jidouka.ImprovementName, Jidouka.JidoukaId], Foreign keys: [], Possible cell values: [123]}",
+     "What tools were used for this innovation?",
+     "SELECT Tool.ToolName FROM Tool JOIN JidoukaTool ON Tool.ToolId = JidoukaTool.ToolId WHERE JidoukaTool.JidoukaId = 123;"]
+
+Example 2: 
+    ["Which innovations are linked to the job 'Task A'?",
+     "SELECT Jidouka.ImprovementName FROM Jidouka WHERE JobName LIKE LOWER('%Task A%');",
+     "{Tables: [Jidouka], Columns: [Jidouka.ImprovementName, Jidouka.JobName], Foreign keys: [], Possible cell values: [Task A]}",
+     "Which authors created these innovations?",
+     "SELECT DISTINCT Author.AuthorName FROM Author JOIN Jidouka ON Author.AuthorId = Jidouka.AuthorId WHERE Jidouka.JobName LIKE LOWER('%Task A%');"]
+
+Example 3:
+    ["List all creators.",
+     "SELECT AuthorName FROM Author;",
+     "{Tables: [Author], Columns: [Author.AuthorName], Foreign keys: [], Possible cell values: []}",
+     "Which design centers are associated with these creators?",
+     "SELECT Author.AuthorName, Department.DepartmentName FROM Author JOIN Jidouka ON Author.AuthorId = Jidouka.AuthorId JOIN Department ON Jidouka.DepartmentId = Department.DepartmentId;"]
+    
+Not related to schema:
+Example 4:
+    ["What is the population of the world?",
+     "I am not sure about the exact population of the world.",
+     None,
+     "How many countries are there in the world?",
+     "There are 195 countries in the world."]
+
+Example 5:
+    ["What is the capital of France?",
+     "The capital of France is Paris.",
+     None,
+     "How about England",
+     "The capital of England is London"]

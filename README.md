@@ -1,4 +1,4 @@
-# Fine-tuning_LLM_to_text2sql_model
+# SQL-generated Language Model
  
 ## About The Project 
 Fine-tuning a Large Language Model to Text2SQL Model with the function of generating SQL query based on user database.
